@@ -2,14 +2,17 @@ package com.eccomerce.nb_eccomerce.entity;
 
 public class Category {
     private String categoryName;
-    private int categoryId;
+    private Long categoryId;
 
-    public Category(String categoryName, int categoryId) {
+    public Category() {
+    }
+
+    public Category(String categoryName, long categoryId) {
         this.categoryName = categoryName;
         this.categoryId = categoryId;
     }
 
-    public int getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
@@ -21,7 +24,7 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
 }

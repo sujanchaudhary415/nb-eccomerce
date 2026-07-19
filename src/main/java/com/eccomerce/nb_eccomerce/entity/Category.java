@@ -1,34 +1,26 @@
 package com.eccomerce.nb_eccomerce.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
-@Entity(name="categories")
+import jakarta.persistence.*;
+import lombok.*;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "categories")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long categoryId;
+
+    @Column(unique = true,nullable = false,length = 100)
     private String categoryName;
 
-    public Category() {
-    }
-
-    public Category(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
+    @Column(nullable = false)
+    private String description;
 }

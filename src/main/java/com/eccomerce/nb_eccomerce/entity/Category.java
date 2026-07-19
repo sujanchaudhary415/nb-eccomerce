@@ -1,15 +1,22 @@
 package com.eccomerce.nb_eccomerce.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity(name="categories")
 public class Category {
-    private String categoryName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
+    private String categoryName;
 
     public Category() {
     }
 
-    public Category(String categoryName, long categoryId) {
+    public Category(String categoryName) {
         this.categoryName = categoryName;
-        this.categoryId = categoryId;
     }
 
     public Long getCategoryId() {
@@ -24,7 +31,4 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
-    }
 }

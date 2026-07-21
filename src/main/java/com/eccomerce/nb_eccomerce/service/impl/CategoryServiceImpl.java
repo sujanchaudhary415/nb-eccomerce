@@ -8,7 +8,13 @@ import com.eccomerce.nb_eccomerce.repository.CategoryRepository;
 import com.eccomerce.nb_eccomerce.service.CategoryService;
 import com.eccomerce.nb_eccomerce.service.helper.CategoryHelper;
 import com.eccomerce.nb_eccomerce.service.helper.CommonHelper;
+import com.eccomerce.nb_eccomerce.util.PageableUtil;
+import com.eccomerce.nb_eccomerce.util.PaginationUtil;
+import com.eccomerce.nb_eccomerce.wrapper.PagedResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,17 +42,27 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getAllCategories() {
+    public PagedResponse<CategoryResponse> getAllCategories(int pageNumber, int pageSize, String sortBy, String sortDir) {
 
-        List<Category> categories = categoryRepository.findAll();
-
-        return categories.stream()
+        Pageable pageDetails= PageableUtil.create(pageNumber,pageSize,sortBy,sortDir);
+        Page<Category> categoryPage=categoryRepository.findAll(pageDetails);
+        List<CategoryResponse> content = categoryPage.getContent()
+                .stream()
                 .map(categoryMapper::toResponse)
                 .toList();
+        return PaginationUtil.build(categoryPage,content);
+
     }
 
     @Override
-    public void deleteCategory(Long categoryId) {
+    public void deleteCategoryById(Long categoryId) {
+       categoryHelper.getCategoryOrThrow(categoryId);
+       categoryRepository.deleteById(categoryId);
+    }
 
+    @Override
+    public CategoryResponse getCategoryById(Long categoryId) {
+        Category category=categoryHelper.getCategoryOrThrow(categoryId);
+        return categoryMapper.toResponse(category);
     }
 }

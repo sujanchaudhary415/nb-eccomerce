@@ -1,21 +1,18 @@
 package com.eccomerce.nb_eccomerce.controller;
 
+import com.eccomerce.nb_eccomerce.constant.AppConstant;
 import com.eccomerce.nb_eccomerce.dto.request.CategoryRequest;
 import com.eccomerce.nb_eccomerce.dto.response.CategoryResponse;
 import com.eccomerce.nb_eccomerce.service.CategoryService;
 import com.eccomerce.nb_eccomerce.wrapper.ApiResponse;
+import com.eccomerce.nb_eccomerce.wrapper.PagedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-
-import java.util.List;
 
 @Validated
 @RestController
@@ -32,9 +29,25 @@ public class CategoryController {
     }
 
     @GetMapping("/api/public/categories")
-    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategory()
+    public ResponseEntity<ApiResponse<PagedResponse<CategoryResponse>>> getAllCategory(@RequestParam(name="pageNumber",defaultValue = AppConstant.PAGE_NUMBER)int pageNumber,
+                                                                              @RequestParam(name="pageSize",defaultValue= AppConstant.PAGE_SIZE)int pageSize,
+                                                                              @RequestParam(name="sortBy",defaultValue = AppConstant.SORT_BY_CATEGORY)String sortBy,
+                                                                              @RequestParam(name = "sortDir",defaultValue = AppConstant.SORT_DIR) String sortDir)
     {
-        List<CategoryResponse> response= categoryService.getAllCategories();
+        PagedResponse<CategoryResponse> response= categoryService.getAllCategories(pageNumber,pageSize,sortBy,sortDir);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response,"Category fetched Successfully"));
+    }
+
+    @DeleteMapping("/api/public/categories/{categoryId}")
+    public ResponseEntity<ApiResponse<Void>> deleteCategory( @PathVariable Long categoryId)
+    {
+        categoryService.deleteCategoryById(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Category Deleted Successfully"));
+    }
+
+    @GetMapping("/api/public/categories/{categoryId}")
+    public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(@PathVariable Long categoryId){
+        CategoryResponse category= categoryService.getCategoryById(categoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(category,"fetched successfully"));
     }
 }

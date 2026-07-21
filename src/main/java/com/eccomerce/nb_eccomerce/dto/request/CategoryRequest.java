@@ -20,6 +20,5 @@ public class CategoryRequest {
     )
     private String categoryName;
 
-    @NotBlank(message = "Description must not be blank")
-    private String description;
+
 }

@@ -7,4 +7,6 @@ import com.eccomerce.nb_eccomerce.wrapper.PagedResponse;
 public interface ProductService {
     ProductResponse createProduct(ProductRequest request);
     PagedResponse<ProductResponse>getAllProducts(int pageNumber, int pageSize, String sortBy,String sortDir);
+    ProductResponse getProductById(Long productId);
+    PagedResponse<ProductResponse> getProductByCategory(Long categoryId,int pageNumber,int pageSize,String sortBy,String sortDir);
 }

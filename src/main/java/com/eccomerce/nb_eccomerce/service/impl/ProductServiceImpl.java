@@ -5,7 +5,9 @@ import com.eccomerce.nb_eccomerce.dto.request.ProductRequest;
 import com.eccomerce.nb_eccomerce.dto.response.ProductResponse;
 import com.eccomerce.nb_eccomerce.entity.Category;
 import com.eccomerce.nb_eccomerce.entity.Product;
+import com.eccomerce.nb_eccomerce.exception.ResourceNotFoundException;
 import com.eccomerce.nb_eccomerce.mapper.ProductMapper;
+import com.eccomerce.nb_eccomerce.repository.CategoryRepository;
 import com.eccomerce.nb_eccomerce.repository.ProductRepository;
 import com.eccomerce.nb_eccomerce.service.ProductService;
 import com.eccomerce.nb_eccomerce.service.helper.CategoryHelper;
@@ -30,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductHelper productHelper;
     private final CategoryHelper categoryHelper;
     private final ProductMapper productMapper;
+    private final CategoryRepository categoryRepository;
 
 
 
@@ -57,6 +60,24 @@ public class ProductServiceImpl implements ProductService {
                                       .map(productMapper::toResponse)
                                       .toList();
 
+        return PaginationUtil.build(productPage,content);
+    }
+
+    @Override
+    public ProductResponse getProductById(Long productId) {
+       Product product= productHelper.getProductOrThrow(productId);
+       return productMapper.toResponse(product);
+    }
+
+    @Override
+    public PagedResponse<ProductResponse> getProductByCategory(Long categoryId, int pageNumber, int pageSize, String sortBy, String sortDir) {
+        Pageable pageable=PageableUtil.create(pageNumber,pageSize,sortBy,sortDir);
+        Category category=categoryRepository.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category","Id",categoryId));
+        Page<Product>productPage=productRepository.findByCategory_CategoryId(category.getCategoryId(),pageable);
+        List<ProductResponse>content=productPage.getContent()
+                .stream()
+                .map(productMapper::toResponse)
+                .toList();
         return PaginationUtil.build(productPage,content);
     }
 }

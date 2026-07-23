@@ -7,6 +7,7 @@ import com.eccomerce.nb_eccomerce.service.CategoryService;
 import com.eccomerce.nb_eccomerce.wrapper.ApiResponse;
 import com.eccomerce.nb_eccomerce.wrapper.PagedResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,15 +40,16 @@ public class CategoryController {
     }
 
     @DeleteMapping("/api/public/categories/{categoryId}")
-    public ResponseEntity<ApiResponse<Void>> deleteCategory( @PathVariable Long categoryId)
+    public ResponseEntity<ApiResponse<Void>> deleteCategory( @PathVariable  @Positive(message = "Category ID must be greater than 0") Long categoryId)
     {
         categoryService.deleteCategoryById(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Category Deleted Successfully"));
     }
 
     @GetMapping("/api/public/categories/{categoryId}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(@PathVariable Long categoryId){
+    public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(@PathVariable  @Positive(message = "Category ID must be greater than 0") Long categoryId){
         CategoryResponse category= categoryService.getCategoryById(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(category,"fetched successfully"));
     }
+
 }

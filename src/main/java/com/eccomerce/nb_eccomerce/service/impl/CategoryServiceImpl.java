@@ -31,6 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
    public CategoryResponse createCategory(CategoryRequest request) {
         String normalizedName=commonHelper.normalize(request.getCategoryName());
         categoryHelper.validateDuplicateName(normalizedName,null);
+
         Category category=categoryMapper.toEntity(request);
         category.setCategoryName(normalizedName);
 

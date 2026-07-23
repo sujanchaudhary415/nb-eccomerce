@@ -13,8 +13,8 @@ public class CategoryHelper {
 
     private final CategoryRepository categoryRepository;
 
-   public void validateDuplicateName (String name, Long excludeId)
-   {
+    public void validateDuplicateName (String name, Long excludeId)
+    {
        boolean exists=(excludeId==null)
                        ?categoryRepository.existsByCategoryNameIgnoreCase(name)
                        :categoryRepository.existsByCategoryNameIgnoreCaseAndCategoryIdNot(name,excludeId);
@@ -23,7 +23,7 @@ public class CategoryHelper {
        {
            throw new DuplicateResourceException("Category already Exist");
        }
-   }
+    }
 
    public Category getCategoryOrThrow (Long categoryId){
      return  categoryRepository.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category","categoryId",categoryId));

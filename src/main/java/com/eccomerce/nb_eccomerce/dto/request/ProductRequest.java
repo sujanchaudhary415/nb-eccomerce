@@ -2,9 +2,15 @@ package com.eccomerce.nb_eccomerce.dto.request;
 
 
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class ProductRequest {
     @NotBlank(message = "Product name is required")
     @Size(min=5,max = 100,message = "Product name must be between 5 and 100")
@@ -20,7 +26,7 @@ public class ProductRequest {
 
     @NotNull(message = "Stock is required")
     @Min(value = 0,message = "Stock must be greater than 0")
-    private Integer Stock;
+    private Integer stock;
 
     @NotNull(message = "Category is required")
     private Long categoryId;

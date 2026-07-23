@@ -9,9 +9,14 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
 
-    Product  toEntity(ProductRequest request);
+    @Mapping(target = "productId", ignore = true)
+    @Mapping(target = "category", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "deletedAT", ignore = true)
+    Product toEntity(ProductRequest request);
 
-    @Mapping(target = "categoryId",source = "category.categoryId")
-    @Mapping(target="categoryName",source="category.categoryName")
+    @Mapping(target = "categoryId", source = "category.categoryId")
+    @Mapping(target = "categoryName", source = "category.categoryName")
     ProductResponse toResponse(Product product);
 }

@@ -52,4 +52,10 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(category,"fetched successfully"));
     }
 
+    @PutMapping("/api/admin/categories/{categoryId}")
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategoryById(@PathVariable @Positive(message = "Category Id must be greater than 0") Long categoryId,@Valid @RequestBody CategoryRequest request){
+        CategoryResponse response=categoryService.updateCategoryById(categoryId,request);
+        return ResponseEntity.ok().body(ApiResponse.success(response,"Category updated Successfully"));
+    }
+
 }

@@ -10,4 +10,5 @@ public interface CategoryService {
     PagedResponse<CategoryResponse> getAllCategories(int pageNumber, int pageSize, String sortBy, String sortDir);
     void deleteCategoryById(Long categoryId);
     CategoryResponse getCategoryById(Long categoryId);
+    CategoryResponse updateCategoryById(Long categoryId,CategoryRequest request);
 }

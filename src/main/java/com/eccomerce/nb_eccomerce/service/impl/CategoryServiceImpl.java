@@ -3,8 +3,10 @@ package com.eccomerce.nb_eccomerce.service.impl;
 import com.eccomerce.nb_eccomerce.dto.request.CategoryRequest;
 import com.eccomerce.nb_eccomerce.dto.response.CategoryResponse;
 import com.eccomerce.nb_eccomerce.entity.Category;
+import com.eccomerce.nb_eccomerce.exception.ConflictException;
 import com.eccomerce.nb_eccomerce.mapper.CategoryMapper;
 import com.eccomerce.nb_eccomerce.repository.CategoryRepository;
+import com.eccomerce.nb_eccomerce.repository.ProductRepository;
 import com.eccomerce.nb_eccomerce.service.CategoryService;
 import com.eccomerce.nb_eccomerce.service.helper.CategoryHelper;
 import com.eccomerce.nb_eccomerce.service.helper.CommonHelper;
@@ -26,6 +28,8 @@ public class CategoryServiceImpl implements CategoryService {
    private final CommonHelper commonHelper;
    private final CategoryHelper categoryHelper;
    private final CategoryMapper categoryMapper;
+   private final ProductRepository productRepository;
+
 
    @Override
    public CategoryResponse createCategory(CategoryRequest request) {
@@ -56,13 +60,30 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategoryById(Long categoryId) {
-       categoryHelper.getCategoryOrThrow(categoryId);
-       categoryRepository.deleteById(categoryId);
-    }
+       Category category=categoryHelper.getCategoryOrThrow(categoryId);
+        if (productRepository.existsAnyProductByCategoryId(categoryId)) {
+            throw new ConflictException(
+                    "Cannot delete category because products are associated with it."
+            );
+            }
+            categoryRepository.delete(category);
+        }
 
     @Override
     public CategoryResponse getCategoryById(Long categoryId) {
         Category category=categoryHelper.getCategoryOrThrow(categoryId);
         return categoryMapper.toResponse(category);
+    }
+
+    @Override
+    public CategoryResponse updateCategoryById(Long categoryId,CategoryRequest request) {
+       Category category=categoryHelper.getCategoryOrThrow(categoryId);
+       if(commonHelper.isNotBlank(request.getCategoryName())){
+           String trimmedName= commonHelper.normalize(request.getCategoryName());
+           categoryHelper.validateDuplicateName(trimmedName,categoryId);
+       }
+       categoryMapper.updateCategoryFromRequest(request,category);
+       categoryRepository.save(category);
+       return categoryMapper.toResponse(category);
     }
 }

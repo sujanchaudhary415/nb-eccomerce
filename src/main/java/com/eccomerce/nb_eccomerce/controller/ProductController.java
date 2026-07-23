@@ -52,4 +52,10 @@ public class ProductController {
         PagedResponse<ProductResponse>response=productService.getProductByCategory(categoryId,pageNumber,pageSize,sortBy,sortDir);
         return ResponseEntity.ok().body(ApiResponse.success(response,"Product fetched successfully"));
     }
+
+    @DeleteMapping("/api/admin/products/{productId}")
+    public ResponseEntity<ApiResponse<Void>> deleteProductById(@PathVariable @Positive(message = "Product ID must be greater than 0") Long productId ){
+        productService.deleteProduct(productId);
+        return ResponseEntity.ok().body(ApiResponse.success("Product deleted Successfully"));
+    }
 }

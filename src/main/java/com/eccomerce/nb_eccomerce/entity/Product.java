@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@SQLDelete(sql = "UPDATE product SET deleted=true, deleted_at=now() Where id=? ")
+@SQLDelete(sql = """
+    UPDATE products SET deleted = true,deleted_at = now() WHERE product_id = ?\s""")
 @SQLRestriction("deleted=false")
 public class Product {
     @Id
@@ -47,6 +48,7 @@ public class Product {
     @Column(nullable = false)
     private boolean deleted=false;
 
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAT;
 
 

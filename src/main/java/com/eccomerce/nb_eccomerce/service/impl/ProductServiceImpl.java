@@ -1,6 +1,5 @@
 package com.eccomerce.nb_eccomerce.service.impl;
 
-
 import com.eccomerce.nb_eccomerce.dto.request.ProductRequest;
 import com.eccomerce.nb_eccomerce.dto.response.ProductResponse;
 import com.eccomerce.nb_eccomerce.entity.Category;
@@ -80,4 +79,14 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
         return PaginationUtil.build(productPage,content);
     }
+
+    @Override
+    public void deleteProduct(Long productId) {
+       productHelper.getProductOrThrow(productId);
+       productRepository.deleteById(productId);
+    }
+
+
+
+
 }

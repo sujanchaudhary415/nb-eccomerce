@@ -9,4 +9,6 @@ public interface ProductService {
     PagedResponse<ProductResponse>getAllProducts(int pageNumber, int pageSize, String sortBy,String sortDir);
     ProductResponse getProductById(Long productId);
     PagedResponse<ProductResponse> getProductByCategory(Long categoryId,int pageNumber,int pageSize,String sortBy,String sortDir);
+    void deleteProduct(Long productId);
+
 }

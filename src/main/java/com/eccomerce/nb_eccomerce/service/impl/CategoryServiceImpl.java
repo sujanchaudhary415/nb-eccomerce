@@ -1,6 +1,7 @@
 package com.eccomerce.nb_eccomerce.service.impl;
 
 import com.eccomerce.nb_eccomerce.dto.request.CategoryRequest;
+import com.eccomerce.nb_eccomerce.dto.request.CategoryUpdateRequest;
 import com.eccomerce.nb_eccomerce.dto.response.CategoryResponse;
 import com.eccomerce.nb_eccomerce.entity.Category;
 import com.eccomerce.nb_eccomerce.exception.ConflictException;
@@ -76,7 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse updateCategoryById(Long categoryId,CategoryRequest request) {
+    public CategoryResponse updateCategoryById(Long categoryId, CategoryUpdateRequest request) {
        Category category=categoryHelper.getCategoryOrThrow(categoryId);
        if(commonHelper.isNotBlank(request.getCategoryName())){
            String trimmedName= commonHelper.normalize(request.getCategoryName());

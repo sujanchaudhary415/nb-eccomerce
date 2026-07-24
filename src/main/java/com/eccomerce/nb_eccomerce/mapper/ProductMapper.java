@@ -1,10 +1,10 @@
 package com.eccomerce.nb_eccomerce.mapper;
 
 import com.eccomerce.nb_eccomerce.dto.request.ProductRequest;
+import com.eccomerce.nb_eccomerce.dto.request.ProductUpdateRequest;
 import com.eccomerce.nb_eccomerce.dto.response.ProductResponse;
 import com.eccomerce.nb_eccomerce.entity.Product;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -19,4 +19,9 @@ public interface ProductMapper {
     @Mapping(target = "categoryId", source = "category.categoryId")
     @Mapping(target = "categoryName", source = "category.categoryName")
     ProductResponse toResponse(Product product);
+
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "category", ignore = true)
+    void updateProductFromRequest(ProductUpdateRequest request,@MappingTarget Product product);
 }

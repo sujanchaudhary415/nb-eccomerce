@@ -2,6 +2,7 @@ package com.eccomerce.nb_eccomerce.controller;
 
 import com.eccomerce.nb_eccomerce.constant.AppConstant;
 import com.eccomerce.nb_eccomerce.dto.request.ProductRequest;
+import com.eccomerce.nb_eccomerce.dto.request.ProductUpdateRequest;
 import com.eccomerce.nb_eccomerce.dto.response.ProductResponse;
 import com.eccomerce.nb_eccomerce.service.ProductService;
 import com.eccomerce.nb_eccomerce.wrapper.ApiResponse;
@@ -57,5 +58,11 @@ public class ProductController {
     public ResponseEntity<ApiResponse<Void>> deleteProductById(@PathVariable @Positive(message = "Product ID must be greater than 0") Long productId ){
         productService.deleteProduct(productId);
         return ResponseEntity.ok().body(ApiResponse.success("Product deleted Successfully"));
+    }
+
+    @PatchMapping("/api/admin/products/{productId}")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProductById(@PathVariable @Positive(message = "Product Id must be greater than 0") Long productId,@Valid @RequestBody ProductUpdateRequest request){
+        ProductResponse response=productService.updateProductById(productId,request);
+        return ResponseEntity.ok().body(ApiResponse.success(response,"Product updated successfully"));
     }
 }

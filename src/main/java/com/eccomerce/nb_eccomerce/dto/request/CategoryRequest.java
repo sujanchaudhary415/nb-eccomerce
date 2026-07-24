@@ -20,5 +20,9 @@ public class CategoryRequest {
     )
     private String categoryName;
 
+    @NotBlank(message = "Description must not be blank")
+    @Size(min=10,max=100, message = "Description must be between 10-100 characters")
+    private String description;
+
 
 }

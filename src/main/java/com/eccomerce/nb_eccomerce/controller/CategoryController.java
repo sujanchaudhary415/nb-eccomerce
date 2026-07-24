@@ -2,6 +2,7 @@ package com.eccomerce.nb_eccomerce.controller;
 
 import com.eccomerce.nb_eccomerce.constant.AppConstant;
 import com.eccomerce.nb_eccomerce.dto.request.CategoryRequest;
+import com.eccomerce.nb_eccomerce.dto.request.CategoryUpdateRequest;
 import com.eccomerce.nb_eccomerce.dto.response.CategoryResponse;
 import com.eccomerce.nb_eccomerce.service.CategoryService;
 import com.eccomerce.nb_eccomerce.wrapper.ApiResponse;
@@ -52,8 +53,8 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(category,"fetched successfully"));
     }
 
-    @PutMapping("/api/admin/categories/{categoryId}")
-    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategoryById(@PathVariable @Positive(message = "Category Id must be greater than 0") Long categoryId,@Valid @RequestBody CategoryRequest request){
+    @PatchMapping("/api/admin/categories/{categoryId}")
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategoryById(@PathVariable @Positive(message = "Category Id must be greater than 0") Long categoryId, @Valid @RequestBody CategoryUpdateRequest request){
         CategoryResponse response=categoryService.updateCategoryById(categoryId,request);
         return ResponseEntity.ok().body(ApiResponse.success(response,"Category updated Successfully"));
     }

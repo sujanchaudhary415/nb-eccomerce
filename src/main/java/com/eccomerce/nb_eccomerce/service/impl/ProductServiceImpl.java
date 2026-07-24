@@ -1,6 +1,7 @@
 package com.eccomerce.nb_eccomerce.service.impl;
 
 import com.eccomerce.nb_eccomerce.dto.request.ProductRequest;
+import com.eccomerce.nb_eccomerce.dto.request.ProductUpdateRequest;
 import com.eccomerce.nb_eccomerce.dto.response.ProductResponse;
 import com.eccomerce.nb_eccomerce.entity.Category;
 import com.eccomerce.nb_eccomerce.entity.Product;
@@ -86,7 +87,23 @@ public class ProductServiceImpl implements ProductService {
        productRepository.deleteById(productId);
     }
 
+    @Override
+    public ProductResponse updateProductById(Long productId, ProductUpdateRequest request) {
+        Product product=productHelper.getProductOrThrow(productId);
+        if(commonHelper.isNotBlank(request.getProductName())){
+            String normalizedName= commonHelper.normalize(request.getProductName());
+            productHelper.validateDuplicateName(normalizedName,productId);
+            request.setProductName(normalizedName);
+        }
 
+        if (request.getCategoryId() != null) {
+            Category category = categoryHelper.getCategoryOrThrow(request.getCategoryId());
+            product.setCategory(category);
+        }
+        productMapper.updateProductFromRequest(request,product);
+        productRepository.save(product);
+        return productMapper.toResponse(product);
+    }
 
 
 }

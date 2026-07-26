@@ -4,26 +4,29 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import lombok.Getter;
 
 import java.time.Instant;
 
+@Getter
 @MappedSuperclass
 public abstract class BaseEntity {
-    @Column(nullable = false,updatable = false)
-    public Instant createdAt;
+
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+
     @Column(nullable = false)
-    public Instant updatedAt;
+    private Instant updatedAt;
 
     @PrePersist
-    protected void onCreate(){
-        Instant now=Instant.now();
-        createdAt=now;
-        updatedAt=now;
+    protected void onCreate() {
+        Instant now = Instant.now();
+        createdAt = now;
+        updatedAt = now;
     }
 
     @PreUpdate
-    protected void onUpdate()
-    {
-        updatedAt=Instant.now();
+    protected void onUpdate() {
+        updatedAt = Instant.now();
     }
 }

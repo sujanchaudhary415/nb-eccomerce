@@ -11,7 +11,15 @@ import java.time.LocalDateTime;
 
 @Builder
 @Entity
-@Table(name = "products")
+@Table(
+        name = "products",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {
+                        "seller_id",
+                        "product_name"
+                })
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,22 +28,24 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = """
     UPDATE products SET deleted = true,deleted_at = now() WHERE product_id = ?\s""")
 @SQLRestriction("deleted=false")
+
 public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long productId;
 
-    @Column(nullable=false,unique = true,length = 100)
+    @Column(nullable=false,length = 200)
     private String productName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
-    private Integer stock;
+    @Column(nullable = false)
+    private Integer stock = 0;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "category_Id",nullable = false)
+    @JoinColumn(name = "category_id",nullable = false)
     private Category category;
 
     @Builder.Default
@@ -49,7 +59,10 @@ public class Product extends BaseEntity {
     private boolean deleted=false;
 
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAT;
+    private LocalDateTime deletedAt;
 
+    @ManyToOne(fetch =FetchType.LAZY)
+    @JoinColumn(name ="seller_id")
+    private User seller;
 
 }

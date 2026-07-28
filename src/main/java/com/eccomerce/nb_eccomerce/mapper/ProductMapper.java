@@ -13,7 +13,7 @@ public interface ProductMapper {
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    @Mapping(target = "deletedAT", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
     Product toEntity(ProductRequest request);
 
     @Mapping(target = "categoryId", source = "category.categoryId")

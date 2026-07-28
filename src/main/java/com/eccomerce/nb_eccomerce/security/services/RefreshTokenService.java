@@ -1,8 +1,7 @@
-package com.eccomerce.nb_eccomerce.service;
+package com.eccomerce.nb_eccomerce.security.services;
 
 import com.eccomerce.nb_eccomerce.entity.RefreshToken;
 import com.eccomerce.nb_eccomerce.entity.User;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 

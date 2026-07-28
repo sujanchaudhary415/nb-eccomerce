@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -48,7 +49,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                  logger.debug("User '{}' authenticated successfully", username);
              }
         }
-        catch(Exception e){
+        catch (UsernameNotFoundException e) {
+            logger.debug("User from JWT no longer exists.");
+        }
+        catch (Exception e) {
             logger.error("JWT authentication failed", e);
         }
         filterChain.doFilter(request, response);
@@ -57,5 +61,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private String parseJwt(HttpServletRequest request){
         return jwtUtils.getAccessTokenFromCookies(request);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        return path.startsWith("/api/auth/")
+                || path.startsWith("/h2-console");
     }
 }

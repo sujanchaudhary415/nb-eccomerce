@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final RefreshTokenService refreshTokenService;
+    private final PasswordEncoder encoder;
 
     @Override
     @Transactional
@@ -54,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
         User user=new User();
         user.setEmail(email);
         user.setUsername(username);
-        user.setPassword(request.getPassword());
+        user.setPassword(encoder.encode(request.getPassword()));
         user.setRoles(roles);
 
         User savedUser=userRepository.save(user);
@@ -70,9 +72,6 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails= (UserDetailsImpl) authentication.getPrincipal();
 
-        List<String>roles=userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
 
         User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -82,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
         ResponseCookie jwtCookie=jwtUtils.generateAccessCookie(userDetails);
         String refreshToken=jwtUtils.generateRefreshToken(userDetails);
 
-        refreshTokenService.saveRefreshToken(user,refreshToken);
+        refreshTokenService.rotateRefreshToken(user, refreshToken);
 
         ResponseCookie jwtRefreshCookie=jwtUtils.generateRefreshTokenCookie(refreshToken);
 

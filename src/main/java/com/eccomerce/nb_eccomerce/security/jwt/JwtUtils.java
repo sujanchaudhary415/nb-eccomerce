@@ -75,7 +75,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    public ResponseCookie generateAccessTokenCookie(UserDetailsImpl userPrincipal){
+    public ResponseCookie generateAccessCookie(UserDetailsImpl userPrincipal){
         String jwt=generateAccessToken(userPrincipal);
         return ResponseCookie.from(jwtCookie,jwt)
                 .path("/api")

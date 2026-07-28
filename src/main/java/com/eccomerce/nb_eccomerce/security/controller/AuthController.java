@@ -1,11 +1,14 @@
 package com.eccomerce.nb_eccomerce.security.controller;
 
+import com.eccomerce.nb_eccomerce.security.model.LoginResult;
+import com.eccomerce.nb_eccomerce.security.request.LoginRequest;
 import com.eccomerce.nb_eccomerce.security.request.SignupRequest;
 import com.eccomerce.nb_eccomerce.security.response.AuthResponse;
 import com.eccomerce.nb_eccomerce.security.services.AuthService;
 import com.eccomerce.nb_eccomerce.wrapper.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,4 +31,18 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(response,"User created Successfully"));
     }
+
+    @PostMapping("/signin")
+    public ResponseEntity<ApiResponse<AuthResponse>> signin(@Valid @RequestBody LoginRequest request){
+        LoginResult result=authService.signin(request);
+
+        HttpHeaders headers=new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE,result.getJwtCookie().toString());
+        headers.add(HttpHeaders.SET_COOKIE,result.getJwtRefreshCookie().toString());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(ApiResponse.success(result.getAuthResponse(),"Login successful"));
+    }
+
 }

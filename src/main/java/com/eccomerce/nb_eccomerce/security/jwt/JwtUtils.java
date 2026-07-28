@@ -1,6 +1,6 @@
 package com.eccomerce.nb_eccomerce.security.jwt;
 
-import com.eccomerce.nb_eccomerce.security.services.UserDetailsImpl;
+import com.eccomerce.nb_eccomerce.security.services.Impl.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

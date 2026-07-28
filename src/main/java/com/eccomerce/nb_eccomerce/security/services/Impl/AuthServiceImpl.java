@@ -10,7 +10,6 @@ import com.eccomerce.nb_eccomerce.security.request.SignupRequest;
 import com.eccomerce.nb_eccomerce.security.response.AuthResponse;
 import com.eccomerce.nb_eccomerce.security.services.AuthService;
 import com.eccomerce.nb_eccomerce.security.services.RefreshTokenService;
-import com.eccomerce.nb_eccomerce.security.services.UserDetailsImpl;
 import com.eccomerce.nb_eccomerce.security.services.helper.AuthHelper;
 import com.eccomerce.nb_eccomerce.security.services.helper.SecurityHelper;
 import com.eccomerce.nb_eccomerce.security.services.mapper.AuthMapper;

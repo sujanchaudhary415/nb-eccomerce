@@ -1,4 +1,4 @@
-package com.eccomerce.nb_eccomerce.security.services;
+package com.eccomerce.nb_eccomerce.security.services.Impl;
 
 import com.eccomerce.nb_eccomerce.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;

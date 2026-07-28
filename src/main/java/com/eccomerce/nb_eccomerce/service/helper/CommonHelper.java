@@ -8,7 +8,6 @@ public class CommonHelper {
    {
        return name.trim().replaceAll("\\s+"," ");
    }
-
    public boolean isNotBlank(String value){
        return value!=null && !value.isBlank();
    }

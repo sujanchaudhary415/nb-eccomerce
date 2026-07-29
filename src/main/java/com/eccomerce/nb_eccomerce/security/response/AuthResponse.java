@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class AuthResponse {
-    private final Long id;
+    private final Long userId;
     private final String username;
     private final String email;
     private final List<String> roles;

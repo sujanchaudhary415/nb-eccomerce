@@ -11,7 +11,5 @@ public interface RefreshTokenService {
     Optional<RefreshToken>findByToken(String token);
     RefreshToken verifyExpiration(RefreshToken refreshToken);
     RefreshToken rotateRefreshToken(User user,String newRefreshToken);
-    void deleteByUser(User user);
-
     void deleteByToken(String refreshToken);
 }

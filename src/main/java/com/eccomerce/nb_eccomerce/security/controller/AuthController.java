@@ -2,6 +2,7 @@ package com.eccomerce.nb_eccomerce.security.controller;
 
 import com.eccomerce.nb_eccomerce.security.jwt.JwtUtils;
 import com.eccomerce.nb_eccomerce.security.model.LoginResult;
+import com.eccomerce.nb_eccomerce.security.model.RefreshTokenResult;
 import com.eccomerce.nb_eccomerce.security.request.LoginRequest;
 import com.eccomerce.nb_eccomerce.security.request.SignupRequest;
 import com.eccomerce.nb_eccomerce.security.response.AuthResponse;
@@ -16,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -50,14 +49,34 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<String>> refreshAccessCookie(HttpServletRequest request) {
-        String tokenFromCookie = jwtUtils.getRefreshTokenFromCookie(request);
-        ResponseCookie freshAccessCookie = authService.refreshAccessToken(tokenFromCookie);
+    public ResponseEntity<ApiResponse<String>> refreshAccessCookie(
+            HttpServletRequest request) {
+
+        String tokenFromCookie =
+                jwtUtils.getRefreshTokenFromCookie(request);
+
+
+        RefreshTokenResult result =
+                authService.refreshAccessToken(tokenFromCookie);
+
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, freshAccessCookie.toString())
-                .body(ApiResponse.success("Access token refreshed successfully"));
+                .headers(headers -> {
 
+                    headers.add(
+                            HttpHeaders.SET_COOKIE,
+                            result.getAccessCookie().toString()
+                    );
+
+                    headers.add(
+                            HttpHeaders.SET_COOKIE,
+                            result.getRefreshCookie().toString()
+                    );
+
+                })
+                .body(ApiResponse.success(
+                        "Token refreshed successfully"
+                ));
     }
 
     @PostMapping("/logout")

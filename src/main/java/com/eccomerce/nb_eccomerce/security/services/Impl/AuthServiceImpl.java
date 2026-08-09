@@ -6,6 +6,7 @@ import com.eccomerce.nb_eccomerce.entity.User;
 import com.eccomerce.nb_eccomerce.repository.UserRepository;
 import com.eccomerce.nb_eccomerce.security.jwt.JwtUtils;
 import com.eccomerce.nb_eccomerce.security.model.LoginResult;
+import com.eccomerce.nb_eccomerce.security.model.RefreshTokenResult;
 import com.eccomerce.nb_eccomerce.security.request.LoginRequest;
 import com.eccomerce.nb_eccomerce.security.request.SignupRequest;
 import com.eccomerce.nb_eccomerce.security.response.AuthResponse;
@@ -89,21 +90,45 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseCookie refreshAccessToken(String refreshToken) {
+    @Transactional
+    public RefreshTokenResult refreshAccessToken(String refreshToken) {
         if(refreshToken==null || refreshToken.isBlank() ){
             throw new IllegalArgumentException("Refresh token is missing");
         }
 
-        RefreshToken storedToken=refreshTokenService.findByToken(refreshToken).orElseThrow(()->new RuntimeException("Refresh token not found"));
+        RefreshToken storedToken = refreshTokenService.findByToken(refreshToken).orElseThrow(() -> new RuntimeException("Refresh token not found"));
+
         refreshTokenService.verifyExpiration(storedToken);
 
-        User user=storedToken.getUser();
 
-        UserDetailsImpl userDetails= UserDetailsImpl.build(user);
+        User user = storedToken.getUser();
+
+        UserDetailsImpl userDetails =
+                UserDetailsImpl.build(user);
 
 
+        String newRefreshToken =
+                jwtUtils.generateRefreshToken(userDetails);
 
-        return jwtUtils.generateAccessCookie(userDetails);
+
+        refreshTokenService.rotateRefreshToken(
+                user,
+                newRefreshToken
+        );
+
+
+        ResponseCookie accessCookie =
+                jwtUtils.generateAccessCookie(userDetails);
+
+
+        ResponseCookie refreshCookie =
+                jwtUtils.generateRefreshTokenCookie(newRefreshToken);
+
+
+        return new RefreshTokenResult(
+                accessCookie,
+                refreshCookie
+        );
     }
 
     @Override

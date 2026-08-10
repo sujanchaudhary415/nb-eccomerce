@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
 import javax.crypto.SecretKey;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -103,15 +102,6 @@ public class JwtUtils {
 
     //Refresh Token
 
-    public String generateRefreshToken(UserDetailsImpl userDetails){
-        return Jwts.builder()
-                .subject(userDetails.getUsername())
-                .claim("type","refresh")
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + jwtRefreshExpirationMs))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
 
     public ResponseCookie generateRefreshTokenCookie(String refreshToken){
         return ResponseCookie.from(jwtRefreshCookie,refreshToken)
@@ -167,14 +157,6 @@ public class JwtUtils {
             logger.warn("Failed to extract username: {}", e.getMessage());
             return null;
         }
-    }
-
-    public Instant getExpirationFromJwtToken(String token) {
-
-        return  parseJwtClaims(token)
-                .getPayload()
-                .getExpiration()
-                .toInstant();
     }
 
 

@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,42 +51,23 @@ public class AuthController {
     public ResponseEntity<ApiResponse<String>> refreshAccessCookie(
             HttpServletRequest request) {
 
-        String tokenFromCookie =
-                jwtUtils.getRefreshTokenFromCookie(request);
+        String tokenFromCookie =jwtUtils.getRefreshTokenFromCookie(request);
+        RefreshTokenResult result = authService.refreshAccessToken(tokenFromCookie);
 
 
-        RefreshTokenResult result =
-                authService.refreshAccessToken(tokenFromCookie);
-
-
-        return ResponseEntity.ok()
-                .headers(headers -> {
-
-                    headers.add(
-                            HttpHeaders.SET_COOKIE,
-                            result.getAccessCookie().toString()
-                    );
-
-                    headers.add(
-                            HttpHeaders.SET_COOKIE,
-                            result.getRefreshCookie().toString()
-                    );
-
-                })
-                .body(ApiResponse.success(
-                        "Token refreshed successfully"
-                ));
+        return ResponseEntity.ok().headers(headers -> {
+                            headers.add(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString());
+                            headers.add(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString());
+        })
+                .body(ApiResponse.success("Token refreshed successfully"));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
 
         String refreshToken = jwtUtils.getRefreshTokenFromCookie(request);
-
         LogoutResponse logoutResponse = authService.logout(refreshToken);
-
-        return ResponseEntity.ok()
-                .headers(headers -> {
+        return ResponseEntity.ok().headers(headers -> {
                     headers.add(HttpHeaders.SET_COOKIE, logoutResponse.getAccessCookie().toString());
                     headers.add(HttpHeaders.SET_COOKIE, logoutResponse.getRefreshCookie().toString());
                 })

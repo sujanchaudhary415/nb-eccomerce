@@ -80,11 +80,11 @@ public class AuthServiceImpl implements AuthService {
 
 
         ResponseCookie jwtCookie=jwtUtils.generateAccessCookie(userDetails);
-        String refreshToken=jwtUtils.generateRefreshToken(userDetails);
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(user);
 
-        refreshTokenService.rotateRefreshToken(user, refreshToken);
 
-        ResponseCookie jwtRefreshCookie=jwtUtils.generateRefreshTokenCookie(refreshToken);
+        ResponseCookie jwtRefreshCookie=jwtUtils.generateRefreshTokenCookie(refreshToken.getToken());
 
         return new LoginResult(authResponse,jwtCookie,jwtRefreshCookie);
     }
@@ -107,14 +107,8 @@ public class AuthServiceImpl implements AuthService {
                 UserDetailsImpl.build(user);
 
 
-        String newRefreshToken =
-                jwtUtils.generateRefreshToken(userDetails);
-
-
-        refreshTokenService.rotateRefreshToken(
-                user,
-                newRefreshToken
-        );
+        RefreshToken rotatedToken =
+                refreshTokenService.rotateRefreshToken(storedToken);
 
 
         ResponseCookie accessCookie =
@@ -122,7 +116,7 @@ public class AuthServiceImpl implements AuthService {
 
 
         ResponseCookie refreshCookie =
-                jwtUtils.generateRefreshTokenCookie(newRefreshToken);
+                jwtUtils.generateRefreshTokenCookie(rotatedToken.getToken());
 
 
         return new RefreshTokenResult(

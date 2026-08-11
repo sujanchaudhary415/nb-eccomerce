@@ -1,5 +1,6 @@
 package com.eccomerce.nb_eccomerce.security.config;
 
+import com.eccomerce.nb_eccomerce.security.jwt.AccessDeniedHandlerJwt;
 import com.eccomerce.nb_eccomerce.security.jwt.AuthEntryPointJwt;
 import com.eccomerce.nb_eccomerce.security.jwt.JwtAuthFilter;
 import com.eccomerce.nb_eccomerce.security.services.Impl.UserDetailsServiceImpl;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthEntryPointJwt authEntryPointJwt;
+    private final AccessDeniedHandlerJwt accessDeniedHandlerJwt;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -57,8 +59,10 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
 
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(authEntryPointJwt))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authEntryPointJwt)
+                        .accessDeniedHandler(accessDeniedHandlerJwt)
+                )
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

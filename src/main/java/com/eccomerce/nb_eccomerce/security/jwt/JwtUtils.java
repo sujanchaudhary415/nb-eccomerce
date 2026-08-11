@@ -140,7 +140,7 @@ public class JwtUtils {
     public boolean validateJwtToken(String token){
         try{
              parseJwtClaims(token);
-            return true;
+             return true;
         }
         catch (Exception e){
             logger.warn("JWT validation failed : {} ",e.getClass().getSimpleName());

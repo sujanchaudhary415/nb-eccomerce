@@ -10,6 +10,6 @@ import org.springframework.http.ResponseCookie;
 @AllArgsConstructor
 public class LoginResult {
     private final AuthResponse authResponse;
-    private final ResponseCookie jwtCookie;
-    private final ResponseCookie jwtRefreshCookie;
+    private final ResponseCookie accessCookie;
+    private final ResponseCookie refreshCookie;
 }

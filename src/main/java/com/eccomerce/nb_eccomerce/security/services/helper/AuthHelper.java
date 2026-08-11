@@ -31,23 +31,40 @@ public class AuthHelper {
         }
     }
 
-    public Set<Role> mapRolesFromStrings(Set<String> inputRoles){
-        Set<Role>roles=new HashSet<>();
+    public Set<Role> mapRolesFromStrings(Set<String> inputRoles) {
 
-        if(inputRoles==null || inputRoles.isEmpty()){
+        Set<Role> roles = new HashSet<>();
+
+        if (inputRoles == null || inputRoles.isEmpty()) {
             roles.add(getOrThrow(AppRole.ROLE_USER));
             return roles;
         }
 
-        for(String r:inputRoles)
-        {
-            String normalizedRole=commonHelper.normalize(r);
-            switch (normalizedRole){
-                case "admin"->roles.add(getOrThrow(AppRole.ROLE_ADMIN));
-                case "seller"->roles.add(getOrThrow(AppRole.ROLE_SELLER));
-                default->roles.add(getOrThrow(AppRole.ROLE_USER));
+        for (String role : inputRoles) {
+
+            String normalizedRole = commonHelper.normalize(role);
+            switch (normalizedRole) {
+
+                case "user" -> roles.add(
+                        getOrThrow(AppRole.ROLE_USER)
+                );
+
+                case "seller" -> roles.add(
+                        getOrThrow(AppRole.ROLE_SELLER)
+                );
+
+                case "admin" ->
+                        throw new IllegalArgumentException(
+                                "Admin role cannot be assigned during signup"
+                        );
+
+                default ->
+                        throw new IllegalArgumentException(
+                                "Invalid role: " + role
+                        );
             }
         }
+
         return roles;
     }
 

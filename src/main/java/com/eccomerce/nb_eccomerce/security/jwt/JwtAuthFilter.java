@@ -52,9 +52,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         catch (UsernameNotFoundException e) {
             logger.debug("User from JWT no longer exists.");
         }
-        catch (Exception e) {
-            logger.error("JWT authentication failed", e);
-        }
         filterChain.doFilter(request, response);
     }
 

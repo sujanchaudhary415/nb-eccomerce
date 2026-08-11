@@ -22,13 +22,13 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @PostMapping("/api/public/products")
+    @PostMapping("/api/admin/products")
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct( @RequestBody @Valid ProductRequest request){
       ProductResponse response= productService.createProduct(request);
       return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response,"Product created"));
     }
 
-    @GetMapping("/api/public/products")
+    @GetMapping("/api/products")
     public ResponseEntity<ApiResponse<PagedResponse<ProductResponse>>> getAllProducts(@RequestParam(name = "pageNumber",defaultValue = AppConstant.PAGE_NUMBER)int pageNumber,
                                                                         @RequestParam(name="pageSize",defaultValue = AppConstant.PAGE_SIZE)int pageSize,
                                                                         @RequestParam(name = "sortBy",defaultValue = AppConstant.SORT_BY_PRODUCT)String sortBy,
@@ -39,13 +39,13 @@ public class ProductController {
     }
 
 
-    @GetMapping("/api/public/products/{productId}")
+    @GetMapping("/api/products/{productId}")
     public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable @Positive(message = "Product ID must be greater than 0") Long productId){
         ProductResponse response=productService.getProductById(productId);
         return ResponseEntity.ok().body(ApiResponse.success(response,"Product fetched successfully"));
     }
 
-    @GetMapping("/api/public/categories/{categoryId}/products")
+    @GetMapping("/api/categories/{categoryId}/products")
     public ResponseEntity<ApiResponse<PagedResponse<ProductResponse>>> getProductByCategory(@PathVariable   @Positive(message = "Category ID must be greater than 0") Long categoryId,@RequestParam(name = "pageNumber",defaultValue = AppConstant.PAGE_NUMBER)int pageNumber,
                                                                                                                           @RequestParam(name="pageSize",defaultValue = AppConstant.PAGE_SIZE)int pageSize,
                                                                                                                           @RequestParam(name = "sortBy",defaultValue = AppConstant.SORT_BY_PRODUCT)String sortBy,

@@ -12,12 +12,14 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public interface AuthMapper {
 
+    @Mapping(source = "userId", target = "userId")
     @Mapping(target = "roles", expression = "java(mapRoles(user.getRoles()))")
     AuthResponse toAuthResponse(User user);
 
-    default List<String> mapRoles(Set<Role> roles){
+
+    default List<String> mapRoles(Set<Role> roles) {
         return roles.stream()
-                .map(role->role.getRoleName().name())
+                .map(role -> role.getRoleName().name())
                 .toList();
     }
 }

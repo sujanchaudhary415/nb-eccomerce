@@ -6,33 +6,42 @@ import com.eccomerce.nb_eccomerce.repository.RefreshTokenRepository;
 import com.eccomerce.nb_eccomerce.security.jwt.JwtUtils;
 import com.eccomerce.nb_eccomerce.security.services.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
+    @Value("${spring.app.jwtRefreshExpirationMs}")
+    private Long jwtRefreshExpirationMs;
+
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtils jwtUtils;
 
+
     @Override
-    @Transactional
-    public RefreshToken saveRefreshToken(User user, String refreshToken) {
-     refreshTokenRepository.findByUser(user).ifPresent(refreshTokenRepository::delete);
+    public RefreshToken createRefreshToken(User user) {
+        // Reuse entity if exists (single active session), or instantiate new
+        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
+                .orElseGet(() -> {
+                    RefreshToken token = new RefreshToken();
+                    token.setUser(user);
+                    return token;
+                });
 
-     RefreshToken token=new RefreshToken();
+        refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setExpiryDate(Instant.now().plusMillis(jwtRefreshExpirationMs));
 
-     token.setUser(user);
-     token.setToken(refreshToken);
-     token.setExpiryDate(jwtUtils.getExpirationFromJwtToken(refreshToken));
-
-     return refreshTokenRepository.save(token);
+        return refreshTokenRepository.save(refreshToken);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -52,24 +61,24 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public RefreshToken rotateRefreshToken(User user, String newRefreshToken) {
-       RefreshToken refreshToken=refreshTokenRepository.findByUser(user).orElse(new RefreshToken());
-       refreshToken.setUser(user);
-       refreshToken.setToken(newRefreshToken);
-       refreshToken.setExpiryDate(jwtUtils.getExpirationFromJwtToken(newRefreshToken));
-       return refreshTokenRepository.save(refreshToken);
+    @Transactional
+    public RefreshToken rotateRefreshToken(RefreshToken oldToken) {
+        // Update the existing entity with a new UUID and fresh expiry date
+        oldToken.setToken(UUID.randomUUID().toString());
+        //oldToken.setExpiryDate(Instant.now().plusMillis(jwtRefreshExpirationMs));
+
+        return refreshTokenRepository.save(oldToken);
     }
 
     @Override
     @Transactional
+    public void deleteByToken(String refreshToken) {
+        refreshTokenRepository.deleteByToken(refreshToken);
+    }
+
+    @Override
     public void deleteByUser(User user) {
         refreshTokenRepository.deleteByUser(user);
-    }
-
-    @Override
-    @Transactional
-    public void delete(RefreshToken refreshToken) {
-        refreshTokenRepository.delete(refreshToken);
     }
 
 

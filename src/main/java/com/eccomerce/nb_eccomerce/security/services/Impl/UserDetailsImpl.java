@@ -2,6 +2,7 @@ package com.eccomerce.nb_eccomerce.security.services.Impl;
 
 import com.eccomerce.nb_eccomerce.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

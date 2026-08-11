@@ -39,8 +39,8 @@ public class AuthController {
         LoginResult result = authService.signin(request);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.SET_COOKIE, result.getJwtCookie().toString());
-        headers.add(HttpHeaders.SET_COOKIE, result.getJwtRefreshCookie().toString());
+        headers.add(HttpHeaders.SET_COOKIE, result.getAccessCookie().toString());
+        headers.add(HttpHeaders.SET_COOKIE, result.getRefreshCookie().toString());
 
         return ResponseEntity.ok()
                 .headers(headers)

@@ -5,8 +5,10 @@ import com.eccomerce.nb_eccomerce.entity.Role;
 import com.eccomerce.nb_eccomerce.enums.AppRole;
 import com.eccomerce.nb_eccomerce.repository.RoleRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+@Order(1)
 @Component
 public class RoleSeeder implements CommandLineRunner {
 

@@ -3,6 +3,7 @@ package com.eccomerce.nb_eccomerce.security.services.Impl;
 import com.eccomerce.nb_eccomerce.entity.RefreshToken;
 import com.eccomerce.nb_eccomerce.entity.Role;
 import com.eccomerce.nb_eccomerce.entity.User;
+import com.eccomerce.nb_eccomerce.exception.RefreshTokenException;
 import com.eccomerce.nb_eccomerce.repository.UserRepository;
 import com.eccomerce.nb_eccomerce.security.jwt.JwtUtils;
 import com.eccomerce.nb_eccomerce.security.model.LoginResult;
@@ -21,7 +22,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,53 +70,40 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(request.getUsername(),request.getPassword())
         );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails= (UserDetailsImpl) authentication.getPrincipal();
 
 
         User user = userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         AuthResponse authResponse=authMapper.toAuthResponse(user);
+        ResponseCookie accessCookie=jwtUtils.generateAccessCookie(userDetails);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        ResponseCookie refreshCookie=jwtUtils.generateRefreshTokenCookie(refreshToken.getToken());
 
-
-        ResponseCookie jwtCookie=jwtUtils.generateAccessCookie(userDetails);
-        RefreshToken refreshToken =
-                refreshTokenService.createRefreshToken(user);
-
-
-        ResponseCookie jwtRefreshCookie=jwtUtils.generateRefreshTokenCookie(refreshToken.getToken());
-
-        return new LoginResult(authResponse,jwtCookie,jwtRefreshCookie);
+        return new LoginResult(authResponse,accessCookie,refreshCookie);
     }
 
     @Override
     @Transactional
     public RefreshTokenResult refreshAccessToken(String refreshToken) {
         if(refreshToken==null || refreshToken.isBlank() ){
-            throw new IllegalArgumentException("Refresh token is missing");
+            throw new RefreshTokenException("Refresh token is missing");
         }
 
         RefreshToken storedToken = refreshTokenService.findByToken(refreshToken).orElseThrow(() -> new RuntimeException("Refresh token not found"));
 
         refreshTokenService.verifyExpiration(storedToken);
 
-
         User user = storedToken.getUser();
-
-        UserDetailsImpl userDetails =
-                UserDetailsImpl.build(user);
+        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
 
 
-        RefreshToken rotatedToken =
-                refreshTokenService.rotateRefreshToken(storedToken);
+        RefreshToken rotatedToken = refreshTokenService.rotateRefreshToken(storedToken);
 
 
-        ResponseCookie accessCookie =
-                jwtUtils.generateAccessCookie(userDetails);
-
-
-        ResponseCookie refreshCookie =
-                jwtUtils.generateRefreshTokenCookie(rotatedToken.getToken());
+        ResponseCookie accessCookie = jwtUtils.generateAccessCookie(userDetails);
+        ResponseCookie refreshCookie = jwtUtils.generateRefreshTokenCookie(rotatedToken.getToken());
 
 
         return new RefreshTokenResult(
@@ -128,19 +115,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public LogoutResponse logout(String refreshToken) {
-
         if (refreshToken != null && !refreshToken.isBlank()) {
-
             refreshTokenService.deleteByToken(refreshToken);
-
         }
 
-        ResponseCookie cleanAccessCookie =
-                jwtUtils.getCleanAccessTokenCookie();
-
-        ResponseCookie cleanRefreshCookie =
-                jwtUtils.getCleanRefreshTokenCookie();
-
+        ResponseCookie cleanAccessCookie = jwtUtils.getCleanAccessTokenCookie();
+        ResponseCookie cleanRefreshCookie = jwtUtils.getCleanRefreshTokenCookie();
 
         return new LogoutResponse(
                 cleanAccessCookie,

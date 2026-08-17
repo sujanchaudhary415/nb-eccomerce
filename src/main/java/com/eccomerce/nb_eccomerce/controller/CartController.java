@@ -21,4 +21,10 @@ public class CartController {
         CartResponse response=cartService.addToCart(request);
         return ResponseEntity.ok().body(ApiResponse.success(response,"Product added to cart"));
     }
+
+    @GetMapping
+    ResponseEntity<ApiResponse<CartResponse>> getCart(){
+        CartResponse response=cartService.getCart();
+        return ResponseEntity.ok().body(ApiResponse.success(response,"Cart retrieved successfully"));
+    }
 }

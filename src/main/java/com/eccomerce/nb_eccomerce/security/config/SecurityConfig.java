@@ -7,6 +7,7 @@ import com.eccomerce.nb_eccomerce.security.services.Impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -80,7 +81,25 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/seller/**")
                         .hasRole("SELLER")
+
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/products/**")
+                        .hasAnyRole("SELLER", "ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**")
+                        .hasAnyRole("SELLER", "ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**")
+                        .hasAnyRole("SELLER", "ADMIN")
+
+                        .requestMatchers("/api/carts/**")
+                        .authenticated()
+
+
                         .anyRequest().authenticated())
+
+
 
                 .headers(headers ->
                         headers.frameOptions(frame -> frame.sameOrigin()))

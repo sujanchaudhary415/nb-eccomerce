@@ -16,6 +16,7 @@ import com.eccomerce.nb_eccomerce.repository.ProductRepository;
 import com.eccomerce.nb_eccomerce.security.services.Impl.UserDetailsImpl;
 import com.eccomerce.nb_eccomerce.service.CartService;
 import com.eccomerce.nb_eccomerce.service.helper.CartHelper;
+import com.eccomerce.nb_eccomerce.service.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,12 +36,13 @@ public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper;
     private final CartHelper cartHelper;
     private final CartRepository cartRepository;
+    private final UserHelper userHelper;
 
     @Override
     @Transactional
     public CartResponse addToCart(AddToCartRequest request) {
 
-        Long userId=getAuthenticatedUserId();
+        Long userId= userHelper.getAuthenticatedUserId();
         Product product=productRepository.findById(request.getProductId()).orElseThrow(()->new ResourceNotFoundException("Product","productId:",request.getProductId()));
         validateProduct(product, request.getQuantity());
         Cart cart=cartHelper.getOrCreateCart(userId);
@@ -59,7 +61,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional(readOnly = true)
     public CartResponse getCart() {
-        Long userId=getAuthenticatedUserId();
+        Long userId=userHelper.getAuthenticatedUserId();
         Cart cart=cartHelper.getCart(userId);
 
         for (CartItem item : cart.getCartItems()) {
@@ -76,7 +78,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponse updateCartItem(Long cartItemId, UpdateCartItemRequest request) {
-        Long userId=getAuthenticatedUserId();
+        Long userId=userHelper.getAuthenticatedUserId();
         Cart cart=cartHelper.getCart(userId);
 
         CartItem cartItem=cartItemRepository.findByCartCartIdAndCartItemId(cart.getCartId(),cartItemId).orElseThrow(()->new ResourceNotFoundException("CartItem","cartItemId",cartItemId));
@@ -94,7 +96,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponse removeCartItem(Long cartItemId) {
-        Long userId=getAuthenticatedUserId();
+        Long userId=userHelper.getAuthenticatedUserId();
         Cart cart=cartHelper.getCart(userId);
         CartItem cartItem=cartItemRepository.findByCartCartIdAndCartItemId(cart.getCartId(),cartItemId).orElseThrow(()->new ResourceNotFoundException("CartItem","CartItemId",cartItemId));
 
@@ -105,7 +107,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponse clearCart() {
-        Long userId=getAuthenticatedUserId();
+        Long userId=userHelper.getAuthenticatedUserId();
         Cart cart=cartHelper.getCart(userId);
 
         cart.getCartItems().clear();
@@ -120,13 +122,6 @@ public class CartServiceImpl implements CartService {
         return carts.stream()
                 .map(this::buildCartResponse)
                 .toList();
-    }
-
-
-    private Long getAuthenticatedUserId(){
-        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails= (UserDetailsImpl) authentication.getPrincipal();
-        return userDetails.getId();
     }
 
     private void validateProduct(Product product, int quantity){

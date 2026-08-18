@@ -54,13 +54,13 @@ public class ProductController {
         return ResponseEntity.ok().body(ApiResponse.success(response, "Product fetched successfully"));
     }
 
-    @DeleteMapping("/api/admin/products/{productId}")
+    @DeleteMapping("/products/{productId}")
     public ResponseEntity<ApiResponse<Void>> deleteProductById(@PathVariable @Positive(message = "Product ID must be greater than 0") Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.ok().body(ApiResponse.success("Product deleted Successfully"));
     }
 
-    @PatchMapping("/api/admin/products/{productId}")
+    @PatchMapping("/products/{productId}")
     public ResponseEntity<ApiResponse<ProductResponse>> updateProductById(@PathVariable @Positive(message = "Product Id must be greater than 0") Long productId, @Valid @RequestBody ProductUpdateRequest request) {
         ProductResponse response = productService.updateProductById(productId, request);
         return ResponseEntity.ok().body(ApiResponse.success(response, "Product updated successfully"));

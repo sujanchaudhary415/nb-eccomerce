@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +61,15 @@ public class CartServiceImpl implements CartService {
     public CartResponse getCart() {
         Long userId=getAuthenticatedUserId();
         Cart cart=cartHelper.getCart(userId);
+
+        for (CartItem item : cart.getCartItems()) {
+
+            BigDecimal currentPrice = item.getProduct().getPrice();
+
+            if (item.getProductPrice().compareTo(currentPrice) != 0) {
+                item.setProductPrice(currentPrice);
+            }
+        }
         return buildCartResponse(cart);
     }
 

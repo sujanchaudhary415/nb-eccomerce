@@ -7,6 +7,7 @@ import com.eccomerce.nb_eccomerce.entity.Category;
 import com.eccomerce.nb_eccomerce.entity.Product;
 import com.eccomerce.nb_eccomerce.exception.ResourceNotFoundException;
 import com.eccomerce.nb_eccomerce.mapper.ProductMapper;
+import com.eccomerce.nb_eccomerce.repository.CartItemRepository;
 import com.eccomerce.nb_eccomerce.repository.CategoryRepository;
 import com.eccomerce.nb_eccomerce.repository.ProductRepository;
 import com.eccomerce.nb_eccomerce.service.ProductService;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,10 +35,12 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryHelper categoryHelper;
     private final ProductMapper productMapper;
     private final CategoryRepository categoryRepository;
+    private final CartItemRepository cartItemRepository;
 
 
 
     @Override
+    @Transactional
     public ProductResponse createProduct(ProductRequest request) {
         String normalizedName= commonHelper.normalize(request.getProductName());
         productHelper.validateDuplicateName(normalizedName,null);
@@ -52,6 +56,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PagedResponse<ProductResponse> getAllProducts(int pageNumber, int pageSize, String sortBy, String sortDir) {
         Pageable pageDetails= PageableUtil.create(pageNumber,pageSize,sortBy,sortDir);
         Page<Product> productPage=productRepository.findAll(pageDetails);
@@ -82,12 +87,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long productId) {
        productHelper.getProductOrThrow(productId);
+       cartItemRepository.deleteByProductProductId(productId);
        productRepository.deleteById(productId);
     }
 
     @Override
+    @Transactional
     public ProductResponse updateProductById(Long productId, ProductUpdateRequest request) {
         Product product=productHelper.getProductOrThrow(productId);
         if(commonHelper.isNotBlank(request.getProductName())){

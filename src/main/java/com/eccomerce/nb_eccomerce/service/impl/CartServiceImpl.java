@@ -13,13 +13,10 @@ import com.eccomerce.nb_eccomerce.mapper.CartMapper;
 import com.eccomerce.nb_eccomerce.repository.CartItemRepository;
 import com.eccomerce.nb_eccomerce.repository.CartRepository;
 import com.eccomerce.nb_eccomerce.repository.ProductRepository;
-import com.eccomerce.nb_eccomerce.security.services.Impl.UserDetailsImpl;
 import com.eccomerce.nb_eccomerce.service.CartService;
 import com.eccomerce.nb_eccomerce.service.helper.CartHelper;
 import com.eccomerce.nb_eccomerce.service.helper.UserHelper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

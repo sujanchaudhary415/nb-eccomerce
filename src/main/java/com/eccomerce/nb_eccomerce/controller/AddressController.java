@@ -52,4 +52,10 @@ public class AddressController {
         return ResponseEntity.ok().body(ApiResponse.success(response,"Address updated successfully"));
     }
 
+    @DeleteMapping("/addresses/{addressId}")
+    ResponseEntity<ApiResponse<Void>> deleteAddress(@PathVariable Long addressId){
+        addressService.deleteAddress(addressId);
+        return ResponseEntity.ok().body(ApiResponse.success("Address deleted successfully"));
+    }
+
 }

@@ -14,4 +14,5 @@ public interface AddressService {
     AddressResponse gettingSpecificAddress(Long addressId);
     List<AddressResponse> gettingAddressByUser();
     AddressResponse updateAddress(Long addressId, AddressUpdateRequest request);
+    void deleteAddress(Long addressId);
 }

@@ -87,5 +87,13 @@ public class AddressServiceImpl implements AddressService {
         return addressMapper.toResponse(updatedAddress);
     }
 
+    @Override
+    @Transactional
+    public void deleteAddress(Long addressId) {
+        Long userId= userHelper.getAuthenticatedUserId();
+        Address address=addressRepository.findByAddressIdAndUserUserId(addressId,userId).orElseThrow(()->new ResourceNotFoundException("Address","addressId",addressId));
+        addressRepository.delete(address);
+    }
+
 
 }

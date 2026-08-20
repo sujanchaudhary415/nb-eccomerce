@@ -19,18 +19,19 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @PostMapping("/api/admin/categories")
+    @PostMapping("/admin/categories")
     public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@RequestBody @Valid CategoryRequest request)
     {
        CategoryResponse response= categoryService.createCategory(request);
        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response,"Category added successfully"));
     }
 
-    @GetMapping("/api/categories")
+    @GetMapping("/categories")
     public ResponseEntity<ApiResponse<PagedResponse<CategoryResponse>>> getAllCategory(@RequestParam(name="pageNumber",defaultValue = AppConstant.PAGE_NUMBER)int pageNumber,
                                                                               @RequestParam(name="pageSize",defaultValue= AppConstant.PAGE_SIZE)int pageSize,
                                                                               @RequestParam(name="sortBy",defaultValue = AppConstant.SORT_BY_CATEGORY)String sortBy,
@@ -40,20 +41,20 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(response,"Category fetched Successfully"));
     }
 
-    @DeleteMapping("/api/admin/categories/{categoryId}")
+    @DeleteMapping("/admin/categories/{categoryId}")
     public ResponseEntity<ApiResponse<Void>> deleteCategory( @PathVariable  @Positive(message = "Category ID must be greater than 0") Long categoryId)
     {
         categoryService.deleteCategoryById(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Category Deleted Successfully"));
     }
 
-    @GetMapping("/api/categories/{categoryId}")
+    @GetMapping("/categories/{categoryId}")
     public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(@PathVariable  @Positive(message = "Category ID must be greater than 0") Long categoryId){
         CategoryResponse category= categoryService.getCategoryById(categoryId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(category,"fetched successfully"));
     }
 
-    @PatchMapping("/api/admin/categories/{categoryId}")
+    @PatchMapping("/admin/categories/{categoryId}")
     public ResponseEntity<ApiResponse<CategoryResponse>> updateCategoryById(@PathVariable @Positive(message = "Category Id must be greater than 0") Long categoryId, @Valid @RequestBody CategoryUpdateRequest request){
         CategoryResponse response=categoryService.updateCategoryById(categoryId,request);
         return ResponseEntity.ok().body(ApiResponse.success(response,"Category updated Successfully"));

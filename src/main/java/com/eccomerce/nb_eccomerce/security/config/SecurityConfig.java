@@ -99,6 +99,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/carts/**")
                         .authenticated()
 
+                        .requestMatchers("/api/orders/**")
+                        .authenticated()
+
 
                         .anyRequest().authenticated())
 

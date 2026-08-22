@@ -1,6 +1,7 @@
 package com.eccomerce.nb_eccomerce.entity;
 
 import com.eccomerce.nb_eccomerce.enums.PaymentGateway;
+import com.eccomerce.nb_eccomerce.enums.PaymentGatewayStatus;
 import com.eccomerce.nb_eccomerce.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,16 +36,13 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     private PaymentGateway pgName;
+
     @Column(unique = true)
     private String pgPaymentId;
-    private String pgStatus;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentGatewayStatus pgStatus;
+
     private String pgResponseMessage;
 
-    public Payment(Long paymentId,PaymentGateway pgName,String pgPaymentId,String pgStatus,String pgResponseMessage){
-        this.paymentId=paymentId;
-        this.pgPaymentId=pgPaymentId;
-        this.pgName=pgName;
-        this.pgStatus=pgStatus;
-        this.pgResponseMessage=pgResponseMessage;
-    }
 }

@@ -9,6 +9,7 @@ import com.eccomerce.nb_eccomerce.exception.ResourceNotFoundException;
 import com.eccomerce.nb_eccomerce.mapper.OrderItemMapper;
 import com.eccomerce.nb_eccomerce.mapper.ShippingAddressMapper;
 import com.eccomerce.nb_eccomerce.repository.AddressRepository;
+import com.eccomerce.nb_eccomerce.repository.ProductRepository;
 import com.eccomerce.nb_eccomerce.service.OrderCreationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class OrderCreationServiceImpl implements OrderCreationService {
     private final AddressRepository addressRepository;
     private final ShippingAddressMapper shippingAddressMapper;
     private final OrderItemMapper orderItemMapper;
+    private final ProductRepository productRepository;
 
     @Override
     public Order create(Cart cart, User user, OrderRequest request) {
@@ -91,7 +93,8 @@ public class OrderCreationServiceImpl implements OrderCreationService {
 
         for (CartItem cartItem : cart.getCartItems()) {
 
-            Product product = cartItem.getProduct();
+            Product product = productRepository.findByIdForUpdate(cartItem.getProduct().getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product","productId",cartItem.getProduct().getProductId()));
             validateProduct(product, cartItem);
             decreaseStock(product, cartItem.getQuantity());
             OrderItem orderItem = orderItemMapper.toOrderItem(cartItem);

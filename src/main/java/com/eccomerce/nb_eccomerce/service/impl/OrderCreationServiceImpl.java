@@ -25,59 +25,78 @@ public class OrderCreationServiceImpl implements OrderCreationService {
 
     @Override
     public Order create(Cart cart, User user, OrderRequest request) {
+
         validateCart(cart);
-        Address address = getAddress(request.getShippingAddressId(),user.getUserId());
-        Order order = createOrderEntity(user,address);
-        addOrderItems(order,cart);
+        Address address = getAddress(
+                request.getShippingAddressId(),
+                user.getUserId()
+        );
+        Order order = createOrderEntity(user, address);
+        addOrderItems(order, cart);
         order.setTotalAmount(calculateTotal(order));
         return order;
     }
 
-    private void validateCart(Cart cart){
-        if (cart.getCartItems() == null || cart.getCartItems().isEmpty()) {
+    private void validateCart(Cart cart) {
+
+        if (cart.getCartItems() == null ||
+                cart.getCartItems().isEmpty()) {
+
             throw new IllegalStateException(
                     "Cannot create order with an empty cart"
             );
         }
     }
 
-    private Address getAddress(Long addressId,Long userId){
-        return addressRepository.findByAddressIdAndUserUserId(addressId,userId).orElseThrow(()->new ResourceNotFoundException("Address","addressId",addressId));
+    private Address getAddress(Long addressId, Long userId) {
+
+        return addressRepository
+                .findByAddressIdAndUserUserId(
+                        addressId,
+                        userId
+                )
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Address",
+                                "addressId",
+                                addressId
+                        )
+                );
     }
 
-    private Order createOrderEntity(User user,Address address) {
+    private Order createOrderEntity(
+            User user,
+            Address address
+    ) {
 
         Order order = new Order();
 
         order.setUser(user);
         order.setCustomerEmail(user.getEmail());
         order.setOrderStatus(OrderStatus.PENDING);
-
         order.setPaymentStatus(PaymentStatus.PENDING);
 
-        ShippingAddress shippingAddress = shippingAddressMapper.toEntity(address);
+        ShippingAddress shippingAddress =
+                shippingAddressMapper.toEntity(address);
+
         order.setShippingAddress(shippingAddress);
 
         return order;
     }
 
-    private void addOrderItems(Order order,Cart cart) {
+    private void addOrderItems(
+            Order order,
+            Cart cart
+    ) {
 
         for (CartItem cartItem : cart.getCartItems()) {
 
             Product product = cartItem.getProduct();
-
-            validateProduct(product,cartItem);
-
+            validateProduct(product, cartItem);
+            decreaseStock(product, cartItem.getQuantity());
             OrderItem orderItem = orderItemMapper.toOrderItem(cartItem);
 
-            BigDecimal subtotal =
-                    product.getPrice()
-                            .multiply(
-                                    BigDecimal.valueOf(
-                                            cartItem.getQuantity()
-                                    )
-                            );
+            BigDecimal subtotal = product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
 
             orderItem.setSubtotal(subtotal);
             orderItem.setOrder(order);
@@ -86,9 +105,13 @@ public class OrderCreationServiceImpl implements OrderCreationService {
         }
     }
 
-    private void validateProduct(Product product,CartItem cartItem) {
+    private void validateProduct(
+            Product product,
+            CartItem cartItem
+    ) {
 
         if (product.getStatus() != ProductStatus.ACTIVE) {
+
             throw new IllegalStateException(
                     "Product is no longer available: "
                             + product.getProductName()
@@ -96,6 +119,7 @@ public class OrderCreationServiceImpl implements OrderCreationService {
         }
 
         if (product.getStock() < cartItem.getQuantity()) {
+
             throw new IllegalStateException(
                     "Insufficient stock for product: "
                             + product.getProductName()
@@ -103,7 +127,18 @@ public class OrderCreationServiceImpl implements OrderCreationService {
         }
     }
 
+    private void decreaseStock(
+            Product product,
+            int quantity
+    ) {
+
+        product.setStock(
+                product.getStock() - quantity
+        );
+    }
+
     private BigDecimal calculateTotal(Order order) {
+
         return order.getOrderItems()
                 .stream()
                 .map(OrderItem::getSubtotal)

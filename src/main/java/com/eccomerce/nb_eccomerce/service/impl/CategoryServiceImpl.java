@@ -31,7 +31,6 @@ public class CategoryServiceImpl implements CategoryService {
    private final CategoryMapper categoryMapper;
    private final ProductRepository productRepository;
 
-
    @Override
    public CategoryResponse createCategory(CategoryRequest request) {
         String normalizedName=commonHelper.normalize(request.getCategoryName());
@@ -43,8 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category savedCategory=categoryRepository.save(category);
 
         return categoryMapper.toResponse(savedCategory);
-
-    }
+   }
 
     @Override
     public PagedResponse<CategoryResponse> getAllCategories(int pageNumber, int pageSize, String sortBy, String sortDir) {
@@ -56,8 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(categoryMapper::toResponse)
                 .toList();
         return PaginationUtil.build(categoryPage,content);
-
-    }
+   }
 
     @Override
     public void deleteCategoryById(Long categoryId) {

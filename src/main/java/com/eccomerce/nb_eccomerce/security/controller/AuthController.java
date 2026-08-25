@@ -9,6 +9,8 @@ import com.eccomerce.nb_eccomerce.security.response.AuthResponse;
 import com.eccomerce.nb_eccomerce.security.response.LogoutResponse;
 import com.eccomerce.nb_eccomerce.security.services.AuthService;
 import com.eccomerce.nb_eccomerce.wrapper.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +22,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name="Auth",description = "APIs for managing auth")
 public class AuthController {
 
     private final AuthService authService;
     private final JwtUtils jwtUtils;
 
     @PostMapping("/signup")
+    @Operation(summary = "Register a new user")
     public ResponseEntity<ApiResponse<AuthResponse>> signup(
             @Valid @RequestBody SignupRequest request) {
 
@@ -35,6 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
+    @Operation(summary = "Sign in user")
     public ResponseEntity<ApiResponse<AuthResponse>> signin(@Valid @RequestBody LoginRequest request) {
         LoginResult result = authService.signin(request);
 
@@ -48,6 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token")
     public ResponseEntity<ApiResponse<String>> refreshAccessCookie(
             HttpServletRequest request) {
 
@@ -63,6 +69,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @Operation(summary = "Log out the current user")
     public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
 
         String refreshToken = jwtUtils.getRefreshTokenFromCookie(request);

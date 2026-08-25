@@ -62,8 +62,8 @@ public class ProductServiceImpl implements ProductService {
         product.setProductName(normalizedName);
         product.setSeller(seller);
 
-        Category category = categoryHelper.getCategoryOrThrow(request.getCategoryId());
-        product.setCategory(category);
+        Category category = categoryHelper .getCategoryOrThrow(request.getCategoryId());
+       product.setCategory(category);
 
         Product savedProduct=productRepository.save(product);
         return productMapper.toResponse(savedProduct);

@@ -4,7 +4,7 @@ A production-oriented **E-Commerce REST API** built with **Java 21, Spring Boot,
 
 **🔗 Live API:** [View Deployed Backend](https://nb-eccomerce-5.onrender.com))  
 **📖 Swagger UI:** [Explore & Test API Endpoints](https://nb-eccomerce-5.onrender.com/swagger-ui/index.html)
-**📂 Source Code:** [GitHub Repository](https://github.com/sujanchaudhary415/nb-eccomerce)
+**📂 Source Code:** [GitHub Repository](https://github.com/sujanchaudhary415/nb-eccomerce))
 
 > **Note:** The backend is deployed on Render. If you are using Render's free web service, the application may take some time to respond after a period of inactivity.
 
@@ -54,7 +54,6 @@ A production-oriented **E-Commerce REST API** built with **Java 21, Spring Boot,
 | PostgreSQL | Relational database |
 | JWT | Token-based authentication |
 | MapStruct | DTO mapping |
-| JUnit 5 & Mockito | Unit testing |
 | Swagger / OpenAPI | API documentation and testing |
 | Docker & Docker Compose | Containerization |
 | Maven | Build and dependency management |

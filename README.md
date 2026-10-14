@@ -2,8 +2,8 @@
 
 A production-oriented **E-Commerce REST API** built with **Java 21, Spring Boot, Spring Security, and PostgreSQL**. This project demonstrates backend development practices including JWT authentication, role-based authorization, inventory management, transactional order processing, and REST API documentation.
 
-**🔗 Live API:** [View Deployed Backend]([https://YOUR-RENDER-URL.onrender.com](https://nb-eccomerce-5.onrender.com))  
-**📖 Swagger UI:** [Explore & Test API Endpoints]([https://YOUR-RENDER-URL.onrender.com/swagger-ui/index.html](https://nb-eccomerce-5.onrender.com/swagger-ui/index.html))  
+**🔗 Live API:** [View Deployed Backend](https://nb-eccomerce-5.onrender.com))  
+**📖 Swagger UI:** [Explore & Test API Endpoints](https://nb-eccomerce-5.onrender.com/swagger-ui/index.html)
 **📂 Source Code:** [GitHub Repository](https://github.com/sujanchaudhary415/nb-eccomerce)
 
 > **Note:** The backend is deployed on Render. If you are using Render's free web service, the application may take some time to respond after a period of inactivity.
